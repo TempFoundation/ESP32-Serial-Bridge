@@ -24,37 +24,38 @@ BluetoothSerial SerialBT;
 #endif // OTA_HANDLER
 
 HardwareSerial Serial_one(1);
-HardwareSerial Serial_two(2);
-HardwareSerial* COM[NUM_COM] = {&Serial, &Serial_one , &Serial_two};
+// HardwareSerial Serial_two(2);
+HardwareSerial* COM[NUM_COM] = {&Serial};
 
 #define MAX_NMEA_CLIENTS 4
 #ifdef PROTOCOL_TCP
 #include <WiFiClient.h>
 WiFiServer server_0(SERIAL0_TCP_PORT);
-WiFiServer server_1(SERIAL1_TCP_PORT);
-WiFiServer server_2(SERIAL2_TCP_PORT);
-WiFiServer *server[NUM_COM]={&server_0,&server_1,&server_2};
+// WiFiServer server_1(SERIAL1_TCP_PORT);
+// WiFiServer server_2(SERIAL2_TCP_PORT);
+// WiFiServer *server[NUM_COM]={&server_0,&server_1,&server_2};
+WiFiServer *server[NUM_COM]={&server_0};
 WiFiClient TCPClient[NUM_COM][MAX_NMEA_CLIENTS];
 #endif
 
 
 uint8_t buf1[NUM_COM][bufferSize];
-uint16_t i1[NUM_COM]={0,0,0};
+uint16_t i1[NUM_COM]={0};
 
 uint8_t buf2[NUM_COM][bufferSize];
-uint16_t i2[NUM_COM]={0,0,0};
+uint16_t i2[NUM_COM]={0};
 
 uint8_t BTbuf[bufferSize];
 uint16_t iBT =0;
 
 
 void setup() {
-
+  Serial.begin(115200);
   delay(500);
   
   COM[0]->begin(UART_BAUD0, SERIAL_PARAM0, SERIAL0_RXPIN, SERIAL0_TXPIN);
-  COM[1]->begin(UART_BAUD1, SERIAL_PARAM1, SERIAL1_RXPIN, SERIAL1_TXPIN);
-  COM[2]->begin(UART_BAUD2, SERIAL_PARAM2, SERIAL2_RXPIN, SERIAL2_TXPIN);
+  // COM[1]->begin(UART_BAUD1, SERIAL_PARAM1, SERIAL1_RXPIN, SERIAL1_TXPIN);
+  // COM[2]->begin(UART_BAUD2, SERIAL_PARAM2, SERIAL2_RXPIN, SERIAL2_TXPIN);
   
   if(debug) COM[DEBUG_COM]->println("\n\nLK8000 WiFi serial bridge V1.00");
   #ifdef MODE_AP 
@@ -126,14 +127,14 @@ void setup() {
   if(debug) COM[DEBUG_COM]->println("Starting TCP Server 1");  
   server[0]->begin(); // start TCP server 
   server[0]->setNoDelay(true);
-  COM[1]->println("Starting TCP Server 2");
-  if(debug) COM[DEBUG_COM]->println("Starting TCP Server 2");  
-  server[1]->begin(); // start TCP server 
-  server[1]->setNoDelay(true);
-  COM[2]->println("Starting TCP Server 3");
-  if(debug) COM[DEBUG_COM]->println("Starting TCP Server 3");  
-  server[2]->begin(); // start TCP server   
-  server[2]->setNoDelay(true);
+  // COM[1]->println("Starting TCP Server 2");
+  // if(debug) COM[DEBUG_COM]->println("Starting TCP Server 2");  
+  // server[1]->begin(); // start TCP server 
+  // server[1]->setNoDelay(true);
+  // COM[2]->println("Starting TCP Server 3");
+  // if(debug) COM[DEBUG_COM]->println("Starting TCP Server 3");  
+  // server[2]->begin(); // start TCP server   
+  // server[2]->setNoDelay(true);
   #endif
 
   esp_err_t esp_wifi_set_max_tx_power(50);  //lower WiFi Power
